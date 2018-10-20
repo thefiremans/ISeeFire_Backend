@@ -42,93 +42,19 @@ namespace NASATest2018.Controllers
                             Latitude = param.Latitude,
                             TextOfComment = param.TextOfComment,
                             Timestamp = DateTime.UtcNow
-
                         }
 
                     );
                     context.SaveChanges();
                     response.ReportId = added.Entity.ReportId;
                 }
-                
             }
             else
             {
                 response.Error = $"Unknown secret user id: \"{param.SecretUserId}\"";
-
             }
-            
             
             return new JsonResult(response);
         }
-
-
-        [HttpPost]
-        public JsonResult GetSecretUserId()
-        {
-            var userId = Guid.NewGuid().ToString();
-            using(var context = new IsfContext())
-            {
-                context.Users.Add(new User(){
-                    UserId = userId
-                });
-                context.SaveChanges();
-            }
-            
-            var response = new GetSecretUserIdResponseDTO
-            {
-               SecretUserId = userId
-            };
-
-            return new JsonResult(response);
-        }
-
-        private bool isLastImportNASAFilesDateIsActual()
-        {
-            return false;
-        }
-
-
-        [HttpPost]
-        public JsonResult DownloadFilesFromNASA()
-        {
-            string[] filesFromNASA = new [] 
-            {
-                "https://firms.modaps.eosdis.nasa.gov/data/active_fire/c6/csv/MODIS_C6_Global_24h.csv",
-                "https://firms.modaps.eosdis.nasa.gov/data/active_fire/viirs/csv/VNP14IMGTDL_NRT_Global_24h.csv"
-            };
-            DownloadFilesFromNASAResponseDTO response = new DownloadFilesFromNASAResponseDTO
-            {
-
-            };
-
-            if(isLastImportNASAFilesDateIsActual())
-            {
-                response.Error = "No need to import NASA files.";
-                return new JsonResult(response);
-            }
-
-            using (var client = new WebClient())
-            {
-                foreach(var path in filesFromNASA)
-                {
-                    try
-                    {
-                        MemoryStream stream = new MemoryStream(client.DownloadData(path));
-                    }
-                    catch(Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                    
-
-                }
-                
-            }
-            
-
-
-            return new JsonResult(response);
-        }
-       
     }
 }
