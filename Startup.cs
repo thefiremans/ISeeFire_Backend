@@ -44,7 +44,7 @@ namespace NASATest2018
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("ISeeFire/Home/Error");
                 app.UseHsts();
             }
 
@@ -56,7 +56,11 @@ namespace NASATest2018
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "ISeeFire/{controller=Home}/{action=Index}");
+
+                routes.MapRoute(
+                    name: "homePage",
+                    template: "{controller=Home}/{action=Index}");    
             });
         }
     }
