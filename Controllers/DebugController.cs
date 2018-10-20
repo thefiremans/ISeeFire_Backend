@@ -25,5 +25,19 @@ namespace NASATest2018.Controllers
             
             return new JsonResult(result);
         }
+
+        [HttpPost]
+        public JsonResult GetReportsList()
+        {
+            var result = new List<string>();
+
+            using(var context = new IsfContext())
+            {
+                foreach(var report in context.Reports)
+                result.Add($"{report.ReportId} - {report.Latitude} - {report.Longitude} - {report.Timestamp}");
+            }
+            
+            return new JsonResult(result);
+        }
     }
 }
