@@ -12,7 +12,11 @@ namespace NASATest2018.Controllers
     {
         private bool checkSecretUserId(string SecretUserId)
         {
-            return true;
+            using(var context = new IsfContext())
+            {
+                var findResult = context.Users.FirstOrDefault(x => x.UserId == SecretUserId);
+                return findResult != null;
+            }
         }
 
         [HttpPost]
