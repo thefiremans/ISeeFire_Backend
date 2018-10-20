@@ -61,7 +61,7 @@ namespace NASATest2018.Controllers
         [HttpPost]
         public JsonResult GetSecretUserId()
         {
-            var userId = (new Guid()).ToString();
+            var userId = Guid.NewGuid().ToString();
             using(var context = new IsfContext())
             {
                 context.Users.Add(new User(){
