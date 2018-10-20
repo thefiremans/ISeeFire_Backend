@@ -14,8 +14,9 @@ namespace NASATest2018.Controllers
         //UploadImage
 
         [HttpPost]
-        public JsonResult UploadImage([FromBody]string name)
+        public JsonResult UploadImage()
         {
+            string name = "";
             var newFileName = string.Empty;
 
             var response = new UploadImageResponseDTO()
@@ -23,6 +24,11 @@ namespace NASATest2018.Controllers
                 TotalUploadedSize = 0
                 
             };
+
+            if(HttpContext.Request.Form.ContainsKey("name"))
+            {
+                name = HttpContext.Request.Form["name"];
+            }
 
             if (HttpContext.Request.Form.Files != null)
             {
