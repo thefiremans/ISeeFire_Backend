@@ -59,16 +59,16 @@ namespace NASATest2018.Controllers
         
         private void parseCSV(MemoryStream stream)
         {
-            bool isFirstLine = true;
             string[] headers = null;
-            int latitude, longitude,acq_date,acq_time,confidence;
+            int latitude = 0
+                ,longitude = 0
+                ,acq_date = 0
+                ,acq_time = 0
+                ,confidence = 0;
             using (StreamReader reader = new StreamReader(stream))
             {
-                 string line = reader.ReadLine();
-                if(isFirstLine)
-                {
-                    headers = line.Split(',', options: StringSplitOptions.RemoveEmptyEntries);
-                    isFirstLine = false;
+                string line = reader.ReadLine();
+                 headers = line.Split(',', options: StringSplitOptions.RemoveEmptyEntries);
                     for(int i = 0; i < headers.Length; i++)
                     {
                         string actualHeader = headers[i];
@@ -93,7 +93,28 @@ namespace NASATest2018.Controllers
                             confidence = i;
                         }
                     }
-                }
+
+                 while( !reader.EndOfStream)
+                 {
+                     line = reader.ReadLine();
+                     if(string.IsNullOrEmpty(line))
+                     {
+                         break;
+                     }
+
+                    var content = line.Split(',', options: StringSplitOptions.RemoveEmptyEntries);
+                    var x = new NasaFireReport
+                    {
+                        Latitude = Decimal.Parse( content[latitude],System.Globalization.NumberStyles.),
+                        Longitude = Decimal.Parse(content[longitude])
+                    };
+                
+
+                 }
+                
+                   
+                
+                
              }
             
         }
@@ -129,6 +150,7 @@ namespace NASATest2018.Controllers
                      try
                      {
                          MemoryStream stream = new MemoryStream(client.DownloadData(path));
+                         parseCSV(stream);
                      }
                      catch(Exception ex)
                      {
