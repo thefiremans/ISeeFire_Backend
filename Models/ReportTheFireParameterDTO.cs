@@ -3,7 +3,7 @@ using System;
 namespace NASATest2018.Models
 {
     [Serializable]
-    public class ReportTheFireParameterDTO
+    public class ReportTheFireParameterDTO: ParameterDTO
     {
         public string Image {get; set;}
 
@@ -14,8 +14,6 @@ namespace NASATest2018.Models
         public decimal Longitude {get; set;}
 
         public decimal Latitude {get; set;}
-
-        public string SecretUserId {get; set;}
         
     }
 }
