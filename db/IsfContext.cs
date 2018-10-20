@@ -7,6 +7,7 @@ namespace NASATest2018
 	{
 		public DbSet<Report> Reports { get; set; }
 		public DbSet<User> Users { get; set; }
+		public DbSet<NasaFireReport> NasaFireReports { get; set; }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{//The entity type 'Comment' requires a primary key to be defined.
