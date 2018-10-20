@@ -27,8 +27,6 @@ namespace NASATest2018.Controllers
             {
             };
 
-            return new JsonResult(response);
-
             //check secret user id
             if(checkSecretUserId(param.SecretUserId))
             {
