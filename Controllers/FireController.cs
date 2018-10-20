@@ -20,6 +20,17 @@ namespace NASATest2018.Controllers
             };
             return new JsonResult(response);
         }
+
+
+        [HttpPost]
+        public JsonResult GetSecretUserId()
+        {
+            var response = new GetSecretUserIdResponseDTO
+            {
+               SecretUserId = "bla-bla-bla-42-secret-id"
+            };
+            return new JsonResult(response);
+        }
        
     }
 }
