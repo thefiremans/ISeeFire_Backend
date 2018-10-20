@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace NASATest2018.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class UpdatedReportId : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,11 +11,13 @@ namespace NASATest2018.Migrations
                 name: "Reports",
                 columns: table => new
                 {
-                    ReportId = table.Column<Guid>(nullable: false),
+                    ReportId = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     SecretUserId = table.Column<string>(nullable: true),
                     TextOfComment = table.Column<string>(nullable: true),
                     Longitude = table.Column<decimal>(nullable: false),
-                    Latitude = table.Column<decimal>(nullable: false)
+                    Latitude = table.Column<decimal>(nullable: false),
+                    Timestamp = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
