@@ -15,6 +15,8 @@ namespace NASATest2018.Controllers
         [HttpPost]
         public JsonResult GetUserList()
         {
+            Console.WriteLine("GetUserList called");
+
             var result = new List<string>();
 
             using(var context = new IsfContext())
@@ -29,6 +31,8 @@ namespace NASATest2018.Controllers
         [HttpPost]
         public JsonResult GetReportsList()
         {
+            Console.WriteLine("GetReportsList called");
+
             var result = new List<string>();
 
             using(var context = new IsfContext())
