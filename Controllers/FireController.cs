@@ -87,6 +87,49 @@ namespace NASATest2018.Controllers
             return false;
         }
 
+        private void parseCSV(MemoryStream stream)
+        {
+            bool isFirstLine = true;
+            string[] headers = null;
+            int latitude, longitude,acq_date,acq_time,confidence;
+            using (StreamReader reader = new StreamReader(stream))
+            {
+
+                string line = reader.ReadLine();
+                if(isFirstLine)
+                {
+                    headers = line.Split(',', options: StringSplitOptions.RemoveEmptyEntries);
+                    isFirstLine = false;
+                    for(int i = 0; i < headers.Length; i++)
+                    {
+                        string actualHeader = headers[i];
+                        if(actualHeader == nameof(latitude))
+                        {
+                            latitude = i;
+                        }
+                        if(actualHeader == nameof(longitude))
+                        {
+                            longitude = i;
+                        }
+                        if(actualHeader == nameof(acq_date))
+                        {
+                            acq_date = i;
+                        }
+                        if(actualHeader == nameof(acq_time))
+                        {
+                            acq_time = i;
+                        }
+                        if(actualHeader == nameof(confidence))
+                        {
+                            confidence = i;
+                        }
+                    }
+                }
+
+            }
+            
+        }
+
 
         [HttpPost]
         public JsonResult DownloadFilesFromNASA()
