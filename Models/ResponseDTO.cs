@@ -5,6 +5,6 @@ namespace NASATest2018.Models
     [Serializable]
     public class ResponseDTO
     {
-        public string error {get; set;}
+        public string Error {get; set;}
     }
 }
