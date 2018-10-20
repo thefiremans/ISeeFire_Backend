@@ -12,25 +12,11 @@ namespace NASATest2018.Controllers
     {
         public IActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
+            if(!Request.Path.Value.ToLowerInvariant().StartsWith("/iseefire"))
+            {
+                Response.Redirect(Url.Action("Index"));
+            }
+            
             return View();
         }
 
