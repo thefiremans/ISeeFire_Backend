@@ -180,7 +180,28 @@ namespace NASATest2018.Controllers
                 Confidence = 0.65m   // from 0 to 1
             });
 
+            decimal longitudeDelta = DistanceToLongitude(parameters.Distance, parameters.Latitude);
+            decimal lattitudeDelta = DistanceToLatitude(parameters.Distance);
+            using(var context = new IsfContext())
+            {
+                // search nasa db
+                // search reports
+            }
+
             return new JsonResult(response);
+        }
+
+        private decimal DistanceToLongitude(decimal distance, decimal latitude)
+        {
+            int radius = 6371000;   // in meters
+            decimal localRadius = (decimal)(radius*Math.Cos((double)latitude));
+            decimal localLength = localRadius*2.0m*(decimal)Math.PI;
+            return (distance*360.0m)/localLength;
+        }
+
+        private decimal DistanceToLatitude(decimal distance)
+        {
+            return (180.0m*distance)/20003930.0m;   // in meters
         }
     }
 }
