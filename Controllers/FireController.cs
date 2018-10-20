@@ -20,11 +20,15 @@ namespace NASATest2018.Controllers
         }
 
         [HttpPost]
-        public JsonResult ReportTheFire(ReportTheFireParameterDTO param)
+        public JsonResult ReportTheFire([FromBody] ReportTheFireParameterDTO param)
         {
+
             var response = new ReportTheFireResponseDTO
             {
             };
+
+            return new JsonResult(response);
+
             //check secret user id
             if(checkSecretUserId(param.SecretUserId))
             {
