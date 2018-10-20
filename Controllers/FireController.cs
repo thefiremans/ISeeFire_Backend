@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -57,44 +58,105 @@ namespace NASATest2018.Controllers
             return new JsonResult(response);
         }
         
-        private void parseCSV(MemoryStream stream)
+        private List<NasaFireReport> parseNasaDataCSV(MemoryStream stream)
         {
-            bool isFirstLine = true;
+            var result = new List<NasaFireReport>();
             string[] headers = null;
-            int latitude, longitude,acq_date,acq_time,confidence;
+            int latitude = 0
+                ,longitude = 0
+                ,acq_date = 0
+                ,acq_time = 0
+                ,confidence = 0;
             using (StreamReader reader = new StreamReader(stream))
             {
-                 string line = reader.ReadLine();
-                if(isFirstLine)
+                string line = reader.ReadLine();
+                headers = line.Split(',', options: StringSplitOptions.RemoveEmptyEntries);
+
+                for(int i = 0; i < headers.Length; i++)
                 {
-                    headers = line.Split(',', options: StringSplitOptions.RemoveEmptyEntries);
-                    isFirstLine = false;
-                    for(int i = 0; i < headers.Length; i++)
+                    string actualHeader = headers[i];
+                    if(actualHeader == nameof(latitude))
                     {
-                        string actualHeader = headers[i];
-                        if(actualHeader == nameof(latitude))
-                        {
-                            latitude = i;
-                        }
-                        if(actualHeader == nameof(longitude))
-                        {
-                            longitude = i;
-                        }
-                        if(actualHeader == nameof(acq_date))
-                        {
-                            acq_date = i;
-                        }
-                        if(actualHeader == nameof(acq_time))
-                        {
-                            acq_time = i;
-                        }
-                        if(actualHeader == nameof(confidence))
-                        {
-                            confidence = i;
-                        }
+                        latitude = i;
+                    }
+                    if(actualHeader == nameof(longitude))
+                    {
+                        longitude = i;
+                    }
+                    if(actualHeader == nameof(acq_date))
+                    {
+                        acq_date = i;
+                    }
+                    if(actualHeader == nameof(acq_time))
+                    {
+                        acq_time = i;
+                    }
+                    if(actualHeader == nameof(confidence))
+                    {
+                        confidence = i;
                     }
                 }
+
+                string[] confidenceLevels = new [] {"nominal", "low", "high"};
+
+                bool isViirsData = false;
+                bool isSecondRow = true;
+
+                while( !reader.EndOfStream)
+                {
+                    line = reader.ReadLine();
+                    if(string.IsNullOrEmpty(line))
+                    {
+                        break;
+                    }
+
+                    var content = line.Split(',', options: StringSplitOptions.RemoveEmptyEntries);
+
+                    CultureInfo provider = CultureInfo.InvariantCulture;
+
+                    string date =$"{content[acq_date]}-{content[acq_time].Substring(0,2)}:{content[acq_time].Substring(2)}";
+
+                    string localConfidence = content[confidence];
+
+                    decimal parsedConfidence = 0;
+
+                    if(isSecondRow)
+                    {
+                        isSecondRow = false;
+                        isViirsData = confidenceLevels.Contains(localConfidence);
+                    }
+
+                    if(isViirsData)
+                    {
+                        if(localConfidence.StartsWith("l"))
+                        {
+                            parsedConfidence = 10;
+                        }
+                        if(localConfidence.StartsWith("n"))
+                        {
+                            parsedConfidence = 40;
+                        }
+                        if(localConfidence.StartsWith("h"))
+                        {
+                            parsedConfidence = 80;
+                        }
+                    }
+                    else
+                    {
+                        parsedConfidence = Decimal.Parse(localConfidence);
+                    }
+
+                    var x = new NasaFireReport
+                    {
+                        Latitude = Decimal.Parse( content[latitude]),
+                        Longitude = Decimal.Parse(content[longitude]),
+                        Timestamp = DateTime.ParseExact(date, "yyyy-MM-dd-HH:mm", provider),
+                        Confidence = parsedConfidence
+                    };
+                    result.Add(x);
+                 } 
              }
+             return result;
             
         }
 
@@ -128,7 +190,22 @@ namespace NASATest2018.Controllers
                  {
                      try
                      {
-                         MemoryStream stream = new MemoryStream(client.DownloadData(path));
+                        MemoryStream stream = new MemoryStream(client.DownloadData(path));
+                        var result = parseNasaDataCSV(stream);
+                        using(var context = new IsfContext())
+                        {
+                            try
+                            {
+                            context.NasaFireReports.AddRange(result);
+                            context.SaveChanges(); 
+                            }
+                            catch(Exception ex)
+                            {
+                            Console.WriteLine(ex.Message);
+                            }
+
+                            
+                        }
                      }
                      catch(Exception ex)
                      {
