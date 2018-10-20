@@ -61,11 +61,20 @@ namespace NASATest2018.Controllers
         [HttpPost]
         public JsonResult GetSecretUserId()
         {
+            var userId = (new Guid()).ToString();
+            using(var context = new IsfContext())
+            {
+                context.Users.Add(new User(){
+                    UserId = userId
+                });
+                context.SaveChanges();
+            }
             
             var response = new GetSecretUserIdResponseDTO
             {
-               SecretUserId = "bla-bla-bla-42-secret-id"
+               SecretUserId = userId
             };
+
             return new JsonResult(response);
         }
        

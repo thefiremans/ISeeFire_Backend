@@ -9,8 +9,8 @@ using NASATest2018;
 namespace NASATest2018.Migrations
 {
     [DbContext(typeof(IsfContext))]
-    [Migration("20181020105736_UpdatedReportId")]
-    partial class UpdatedReportId
+    [Migration("20181020115818_regeneratingMigrations")]
+    partial class regeneratingMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -36,6 +36,20 @@ namespace NASATest2018.Migrations
                     b.HasKey("ReportId");
 
                     b.ToTable("Reports");
+                });
+
+            modelBuilder.Entity("NASATest2018.User", b =>
+                {
+                    b.Property<string>("UserId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Phone");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }

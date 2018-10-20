@@ -35,6 +35,20 @@ namespace NASATest2018.Migrations
 
                     b.ToTable("Reports");
                 });
+
+            modelBuilder.Entity("NASATest2018.User", b =>
+                {
+                    b.Property<string>("UserId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Phone");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Users");
+                });
 #pragma warning restore 612, 618
         }
     }
