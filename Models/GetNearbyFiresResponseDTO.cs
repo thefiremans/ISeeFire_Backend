@@ -11,5 +11,6 @@ namespace NASATest2018.Models
         public bool IsOwner {get; set;}
         public bool IsNasa {get; set;}
         public decimal Confidence {get; set;}
+        public decimal Distance {get; set;}
     }
 }
