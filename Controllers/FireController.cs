@@ -165,15 +165,9 @@ namespace NASATest2018.Controllers
             return false;
         }
 
-         [HttpPost]
-        public JsonResult DownloadFilesFromNASA()
-         {
-             string[] filesFromNASA = new [] 
-             {
-                 "https://firms.modaps.eosdis.nasa.gov/data/active_fire/c6/csv/MODIS_C6_Global_24h.csv",
-                 "https://firms.modaps.eosdis.nasa.gov/data/active_fire/viirs/csv/VNP14IMGTDL_NRT_Global_24h.csv"
-             };
-             DownloadFilesFromNASAResponseDTO response = new DownloadFilesFromNASAResponseDTO
+        private JsonResult downloadNasaFileAndImportInDb(string path)
+        {
+            DownloadFilesFromNASAResponseDTO response = new DownloadFilesFromNASAResponseDTO
              {
  
              };
@@ -186,32 +180,32 @@ namespace NASATest2018.Controllers
  
              using (var client = new WebClient())
              {
-                 foreach(var path in filesFromNASA)
+                 
                  {
-                     try
-                     {
-                        MemoryStream stream = new MemoryStream(client.DownloadData(path));
-                        var result = parseNasaDataCSV(stream);
-                        using(var context = new IsfContext())
-                        {
-                            try
-                            {
-                            context.NasaFireReports.AddRange(result);
-                            context.SaveChanges(); 
-                            }
-                            catch(Exception ex)
-                            {
-                            Console.WriteLine(ex.Message);
-                            }
-
-                            
-                        }
-                     }
-                     catch(Exception ex)
-                     {
-                         Console.WriteLine(ex.Message);
-                     }
                      
+                     try
+            {
+            MemoryStream stream = new MemoryStream(client.DownloadData(path));
+            var result = parseNasaDataCSV(stream);
+            using(var context = new IsfContext())
+            {
+                try
+                {
+                context.NasaFireReports.AddRange(result);
+                context.SaveChanges(); 
+                }
+                catch(Exception ex)
+                {
+                Console.WriteLine(ex.Message);
+                }
+
+                
+            }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
  
                  }
                  
@@ -220,6 +214,31 @@ namespace NASATest2018.Controllers
  
  
              return new JsonResult(response);
+            
+        }
+
+         [HttpPost]
+        public JsonResult DownloadModisFileFromNASA()
+         {
+             string[] filesFromNASA = new [] 
+             {
+                 "https://firms.modaps.eosdis.nasa.gov/data/active_fire/c6/csv/MODIS_C6_Global_24h.csv"
+             };
+
+             return downloadNasaFileAndImportInDb(filesFromNASA[0]);
+             
+         }
+
+         [HttpPost]
+        public JsonResult DownloadViirsFileFromNASA()
+         {
+             string[] filesFromNASA = new [] 
+             {
+                 "https://firms.modaps.eosdis.nasa.gov/data/active_fire/viirs/csv/VNP14IMGTDL_NRT_Global_24h.csv"
+             };
+
+             return downloadNasaFileAndImportInDb(filesFromNASA[0]);
+             
          }
         
         [HttpPost]
