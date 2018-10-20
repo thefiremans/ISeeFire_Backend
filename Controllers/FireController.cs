@@ -145,5 +145,42 @@ namespace NASATest2018.Controllers
              return new JsonResult(response);
          }
         
-     }
- }
+        [HttpPost]
+        public JsonResult GetNearbyFires(GetNearbyFiresParametersDTO parameters)
+        {
+            var response = new List<GetNearbyFiresResponseDTO>();
+
+            // owner
+            response.Add(new GetNearbyFiresResponseDTO() {
+                Latitude = 46.484566m, 
+                Longitude = 30.737960m,
+                PhotoUrl = "asdf",
+                IsOwner = true,
+                IsNasa = false,
+                Confidence = 0.2m   // from 0 to 1
+            });
+
+            // not owner
+            response.Add(new GetNearbyFiresResponseDTO() {
+                Latitude = 46.500144m,
+                Longitude = 30.663893m,
+                PhotoUrl = "sdfg",
+                IsOwner = false,
+                IsNasa = false,
+                Confidence = 0.2m   // from 0 to 1
+            });
+
+            // nasa
+            response.Add(new GetNearbyFiresResponseDTO() {
+                Latitude = 46.412424m,
+                Longitude = 30.670665m,
+                PhotoUrl = "dfgh",
+                IsOwner = false,
+                IsNasa = true,
+                Confidence = 0.65m   // from 0 to 1
+            });
+
+            return new JsonResult(response);
+        }
+    }
+}
