@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NASATest2018.Models;
@@ -76,6 +78,54 @@ namespace NASATest2018.Controllers
             {
                SecretUserId = userId
             };
+
+            return new JsonResult(response);
+        }
+
+        private bool isLastImportNASAFilesDateIsActual()
+        {
+            return false;
+        }
+
+
+        [HttpPost]
+        public JsonResult DownloadFilesFromNASA()
+        {
+            string[] filesFromNASA = new [] 
+            {
+                "https://firms.modaps.eosdis.nasa.gov/data/active_fire/c6/csv/MODIS_C6_Global_24h.csv",
+                "https://firms.modaps.eosdis.nasa.gov/data/active_fire/viirs/csv/VNP14IMGTDL_NRT_Global_24h.csv"
+            };
+            DownloadFilesFromNASAResponseDTO response = new DownloadFilesFromNASAResponseDTO
+            {
+
+            };
+
+            if(isLastImportNASAFilesDateIsActual())
+            {
+                response.Error = "No need to import NASA files.";
+                return new JsonResult(response);
+            }
+
+            using (var client = new WebClient())
+            {
+                foreach(var path in filesFromNASA)
+                {
+                    try
+                    {
+                        MemoryStream stream = new MemoryStream(client.DownloadData(path));
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    
+
+                }
+                
+            }
+            
+
 
             return new JsonResult(response);
         }
