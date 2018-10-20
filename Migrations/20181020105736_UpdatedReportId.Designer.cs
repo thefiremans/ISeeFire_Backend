@@ -9,8 +9,8 @@ using NASATest2018;
 namespace NASATest2018.Migrations
 {
     [DbContext(typeof(IsfContext))]
-    [Migration("20181020100236_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20181020105736_UpdatedReportId")]
+    partial class UpdatedReportId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,7 +20,7 @@ namespace NASATest2018.Migrations
 
             modelBuilder.Entity("NASATest2018.Report", b =>
                 {
-                    b.Property<Guid>("ReportId")
+                    b.Property<int>("ReportId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Latitude");
@@ -30,6 +30,8 @@ namespace NASATest2018.Migrations
                     b.Property<string>("SecretUserId");
 
                     b.Property<string>("TextOfComment");
+
+                    b.Property<DateTime>("Timestamp");
 
                     b.HasKey("ReportId");
 

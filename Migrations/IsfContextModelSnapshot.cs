@@ -18,7 +18,7 @@ namespace NASATest2018.Migrations
 
             modelBuilder.Entity("NASATest2018.Report", b =>
                 {
-                    b.Property<Guid>("ReportId")
+                    b.Property<int>("ReportId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Latitude");
