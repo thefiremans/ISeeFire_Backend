@@ -97,6 +97,11 @@ namespace NASATest2018.Controllers
                     }
                 }
 
+                string[] confidenceLevels = new [] {"nominal", "low", "high"};
+
+                bool isViirsData = false;
+                bool isSecondRow = true;
+
                 while( !reader.EndOfStream)
                 {
                     line = reader.ReadLine();
@@ -111,12 +116,42 @@ namespace NASATest2018.Controllers
 
                     string date =$"{content[acq_date]}-{content[acq_time].Substring(0,2)}:{content[acq_time].Substring(2)}";
 
+                    string localConfidence = content[confidence];
+
+                    decimal parsedConfidence = 0;
+
+                    if(isSecondRow)
+                    {
+                        isSecondRow = false;
+                        isViirsData = confidenceLevels.Contains(localConfidence);
+                    }
+
+                    if(isViirsData)
+                    {
+                        if(localConfidence.StartsWith("l"))
+                        {
+                            parsedConfidence = 10;
+                        }
+                        if(localConfidence.StartsWith("n"))
+                        {
+                            parsedConfidence = 40;
+                        }
+                        if(localConfidence.StartsWith("h"))
+                        {
+                            parsedConfidence = 80;
+                        }
+                    }
+                    else
+                    {
+                        parsedConfidence = Decimal.Parse(localConfidence);
+                    }
+
                     var x = new NasaFireReport
                     {
                         Latitude = Decimal.Parse( content[latitude]),
                         Longitude = Decimal.Parse(content[longitude]),
                         Timestamp = DateTime.ParseExact(date, "yyyy-MM-dd-HH:mm", provider),
-                        Confidence = Decimal.Parse(content[confidence])
+                        Confidence = parsedConfidence
                     };
                     result.Add(x);
                  } 
@@ -155,13 +190,22 @@ namespace NASATest2018.Controllers
                  {
                      try
                      {
-                         MemoryStream stream = new MemoryStream(client.DownloadData(path));
-                         var result = parseNasaDataCSV(stream);
-                         using(var context = new IsfContext())
-                         {
-                             context.NasaFireReports.AddRange(result);
-                             context.SaveChanges();
-                         }
+                        MemoryStream stream = new MemoryStream(client.DownloadData(path));
+                        var result = parseNasaDataCSV(stream);
+                        using(var context = new IsfContext())
+                        {
+                            try
+                            {
+                            context.NasaFireReports.AddRange(result);
+                            context.SaveChanges(); 
+                            }
+                            catch(Exception ex)
+                            {
+                            Console.WriteLine(ex.Message);
+                            }
+
+                            
+                        }
                      }
                      catch(Exception ex)
                      {
