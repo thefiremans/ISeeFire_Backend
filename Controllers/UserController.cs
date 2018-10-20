@@ -31,7 +31,7 @@ namespace NASATest2018.Controllers
         }
 
         [HttpPost]       
-        public JsonResult UpdateProfile(UpdateProfileParameterDTO updateData)
+        public JsonResult UpdateProfile([FromBody] UpdateProfileParameterDTO updateData)
         {
             using(var context = new IsfContext())
             {
