@@ -40,45 +40,19 @@ namespace NASATest2018.Controllers
                             Latitude = param.Latitude,
                             TextOfComment = param.TextOfComment,
                             Timestamp = DateTime.UtcNow
-
                         }
 
                     );
                     context.SaveChanges();
                     response.ReportId = added.Entity.ReportId;
                 }
-                
             }
             else
             {
                 response.Error = $"Unknown secret user id: \"{param.SecretUserId}\"";
-
             }
-            
             
             return new JsonResult(response);
         }
-
-
-        [HttpPost]
-        public JsonResult GetSecretUserId()
-        {
-            var userId = Guid.NewGuid().ToString();
-            using(var context = new IsfContext())
-            {
-                context.Users.Add(new User(){
-                    UserId = userId
-                });
-                context.SaveChanges();
-            }
-            
-            var response = new GetSecretUserIdResponseDTO
-            {
-               SecretUserId = userId
-            };
-
-            return new JsonResult(response);
-        }
-       
     }
 }
