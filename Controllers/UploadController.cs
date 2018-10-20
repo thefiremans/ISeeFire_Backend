@@ -16,7 +16,8 @@ namespace NASATest2018.Controllers
         [HttpPost]
         public JsonResult UploadImage()
         {
-            string name = "";
+            string SecretUserId = "";
+            string ReportId = "";
             var newFileName = string.Empty;
 
             var response = new UploadImageResponseDTO()
@@ -25,9 +26,14 @@ namespace NASATest2018.Controllers
                 
             };
 
-            if(HttpContext.Request.Form.ContainsKey("name"))
+            if(HttpContext.Request.Form.ContainsKey("SecretUserId"))
             {
-                name = HttpContext.Request.Form["name"];
+                SecretUserId = HttpContext.Request.Form["SecretUserId"];
+            }
+
+            if(HttpContext.Request.Form.ContainsKey("ReportId"))
+            {
+                ReportId = HttpContext.Request.Form["ReportId"];
             }
 
             if (HttpContext.Request.Form.Files != null)
@@ -65,7 +71,7 @@ namespace NASATest2018.Controllers
 
                     newFileName = myUniqueFileName + FileExtension;
                     response.TotalUploadedSize = fs.Length;
-                    response.GeneratedImageName = newFileName+"#####" + name;
+                    response.GeneratedImageName = $"fileName: {newFileName}, SecretUser: {SecretUserId}, Report: {ReportId}";
                 
                 }
             }
