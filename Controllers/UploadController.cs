@@ -14,7 +14,7 @@ namespace NASATest2018.Controllers
         //UploadImage
 
         [HttpPost]
-        public JsonResult UploadImage(string name)
+        public JsonResult UploadImage([FromBody]string name)
         {
             var newFileName = string.Empty;
 
@@ -59,7 +59,7 @@ namespace NASATest2018.Controllers
 
                     newFileName = myUniqueFileName + FileExtension;
                     response.TotalUploadedSize = fs.Length;
-                    response.GeneratedImageName = newFileName;
+                    response.GeneratedImageName = newFileName+"#####" + name;
                 
                 }
             }
