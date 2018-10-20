@@ -39,12 +39,13 @@ namespace NASATest2018.Controllers
 
                     );
                     context.SaveChanges();
-                    response.ReportId = added.ReportId;
+                    response.ReportId = added.Entity.ReportId;
                 }
                 
             }
             else
             {
+                response.Error = $"Unknown secret user id: \"{param.SecretUserId}\"";
 
             }
             
