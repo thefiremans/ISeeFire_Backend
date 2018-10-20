@@ -18,12 +18,23 @@ namespace NASATest2018.Controllers
         {
             var newFileName = string.Empty;
 
+            var response = new UploadImageResponseDTO()
+            {
+                TotalUploadedSize = 0
+                
+            };
+
             if (HttpContext.Request.Form.Files != null)
             {
                 var fileName = string.Empty;
                 string PathDB = string.Empty;
 
                 var files = HttpContext.Request.Form.Files;
+
+                //Assigning Unique Filename (Guid)
+                var myUniqueFileName = Convert.ToString(Guid.NewGuid());
+
+                string  FileExtension = "";
 
                 using(var fs = new System.IO.MemoryStream())
                 {
@@ -34,14 +45,10 @@ namespace NASATest2018.Controllers
                             //Getting FileName
                             fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
 
-                            //Assigning Unique Filename (Guid)
-                            var myUniqueFileName = Convert.ToString(Guid.NewGuid());
+                            
 
                             //Getting file Extension
-                            var FileExtension = Path.GetExtension(fileName);
-
-                            // concating  FileName + FileExtension
-                            newFileName = myUniqueFileName + FileExtension;
+                            FileExtension = Path.GetExtension(fileName);
                             
                             file.CopyTo(fs);
 
@@ -49,10 +56,14 @@ namespace NASATest2018.Controllers
                         }
 
                     }
+
+                    newFileName = myUniqueFileName + FileExtension;
+                    response.TotalUploadedSize = fs.Length;
+                    response.GeneratedImageName = newFileName;
                 
                 }
             }
-            return new JsonResult(new UploadImageResponseDTO());
+            return new JsonResult(response);
         }
     }
 }
