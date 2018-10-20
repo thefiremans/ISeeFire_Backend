@@ -258,6 +258,8 @@ namespace NASATest2018.Controllers
                 }
             }
 
+            response = response.OrderBy(q => q.Distance).ToList();
+
             return new JsonResult(response);
         }
 
