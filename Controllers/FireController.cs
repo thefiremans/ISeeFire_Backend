@@ -184,24 +184,108 @@ namespace NASATest2018.Controllers
             decimal lattitudeDelta = DistanceToLatitude(parameters.Distance);
             using(var context = new IsfContext())
             {
+                bool longNormal = true;
+
+                if(longitudeDelta + parameters.Longitude > 180 || 
+                    parameters.Longitude - longitudeDelta < -180)
+                    longNormal = false;
+
+                decimal minLongitude = NormalizeLongitude(parameters.Longitude - longitudeDelta);
+                decimal maxLongitude = NormalizeLongitude(parameters.Longitude + longitudeDelta);
+
+                var reports = context
+                    .NasaFireReports
+                    .Where(q => q.Latitude < Math.Min(parameters.Latitude + lattitudeDelta, 90) 
+                            && q.Latitude > Math.Max(parameters.Latitude - lattitudeDelta, -90));
+
+                if(longNormal)
+                    reports = reports
+                        .Where(q => q.Longitude < parameters.Longitude + longitudeDelta &&
+                                    q.Longitude > parameters.Longitude - longitudeDelta);
+                else
+                {
+                    reports = reports
+                        .Where(q => 
+                            (q.Longitude < maxLongitude && q.Longitude > -180) ||
+                            (q.Longitude > minLongitude && q.Longitude < 180) 
+                        );
+                }
+
                 // search nasa db
+                foreach(var report in reports)
+                {
+                    response.Add(new GetNearbyFiresResponseDTO()
+                    {
+                        Latitude = report.Latitude,
+                        Longitude = report.Longitude,
+                        PhotoUrl = "stillFake",
+                        IsOwner = false,
+                        IsNasa = true,
+                        Confidence = report.Confidence/100.0m
+                    });
+                }
+
                 // search reports
+                // filter by distance
+                var userRerorts = context.Reports
+                    .Where(q => q.Latitude < Math.Min(parameters.Latitude + lattitudeDelta, 90) 
+                            && q.Latitude > Math.Max(parameters.Latitude - lattitudeDelta, -90));
+
+                if(longNormal)
+                    userRerorts = userRerorts 
+                        .Where(q => q.Longitude < parameters.Longitude + longitudeDelta &&
+                                    q.Longitude > parameters.Longitude - longitudeDelta);
+                else
+                {
+                    userRerorts = userRerorts 
+                        .Where(q => 
+                            (q.Longitude < maxLongitude && q.Longitude > -180) ||
+                            (q.Longitude > minLongitude && q.Longitude < 180) 
+                        );
+                }
+                
+                foreach(var report in userRerorts)
+                {
+                    response.Add(new GetNearbyFiresResponseDTO()
+                    {
+                        Latitude = report.Latitude,
+                        Longitude = report.Longitude,
+                        PhotoUrl = "stillFake",
+                        IsOwner = false,
+                        IsNasa = false,
+                        Confidence = 0.2m
+                    });
+                }
             }
 
             return new JsonResult(response);
         }
 
+        private decimal NormalizeLongitude(decimal longitude)
+        {
+            while(longitude > 180)
+            {
+                longitude -= 360;
+            }
+
+            while(longitude < -180)
+            {
+                longitude += 360;
+            }
+            return longitude;
+        }
+
         private decimal DistanceToLongitude(decimal distance, decimal latitude)
         {
             int radius = 6371000;   // in meters
-            decimal localRadius = (decimal)(radius*Math.Cos((double)latitude));
-            decimal localLength = localRadius*2.0m*(decimal)Math.PI;
-            return (distance*360.0m)/localLength;
+            double localRadius = radius*Math.Cos((double)latitude);
+            double localLength = localRadius*2.0*Math.PI;
+            return (decimal)Math.Abs(((double)distance*360.0)/localLength);
         }
 
         private decimal DistanceToLatitude(decimal distance)
         {
-            return (180.0m*distance)/20003930.0m;   // in meters
+            return (decimal)Math.Abs((double) ((180.0m*distance)/20003930.0m));   // in meters
         }
     }
 }
