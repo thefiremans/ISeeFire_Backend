@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NASATest2018;
 
 namespace NASATest2018.Migrations
 {
     [DbContext(typeof(IsfContext))]
-    partial class IsfContextModelSnapshot : ModelSnapshot
+    [Migration("20181021063835_ExtendedReportWithImage")]
+    partial class ExtendedReportWithImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
