@@ -318,7 +318,7 @@ namespace NASATest2018.Controllers
                         PhotoUrl = "stillFake",
                         IsOwner = false,
                         IsNasa = true,
-                        Confidence = report.Confidence/100.0m
+                        Confidence = report.Confidence //confidence is already normalized
                     });
                 }
 
