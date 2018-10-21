@@ -105,7 +105,7 @@ namespace NASATest2018.Controllers
                         using(var context = new IsfContext())
                         {
                             var findResult = context.Reports.FirstOrDefault(x => x.SecretUserId == SecretUserId && x.ReportId ==  parsedReportId);
-                            findResult.ImagePath = pathToImage;
+                            findResult.ImagePath = newFileName;
                             context.SaveChanges();
                         }
 
