@@ -57,8 +57,20 @@ h3 {
 @{
   foreach(var m in Model.UsersReports )
   {
+    var meters = Math.Round(m.Distance, 2);
+    string dist = "";
+    if(meters > 2000)
+    {
+      dist = $"{Math.Round(meters/1000.0m, 1)} km";
+    }
+    else
+    {
+      dist = $"{Math.Round(meters, 2)} meters";
+    }
+
+
     <div>
-      @($"{Math.Round(m.Distance, 2)} meters, url: {m.PhotoUrl}, Latitude: {m.Latitude}, Longitude: {m.Longitude}, Confidence: {Math.Round(m.Confidence, 2 )} ")
+      @($"{dist}, url: {m.PhotoUrl}, Latitude: {m.Latitude}, Longitude: {m.Longitude}, Confidence: {Math.Round(m.Confidence, 2 )} ")
     </div>
   }
 }

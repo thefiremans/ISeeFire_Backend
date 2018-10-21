@@ -68,7 +68,7 @@ namespace NASATest2018.Controllers
             };
             using (var context = new IsfContext())
             {
-                var retrievedReports = context.NasaFireReports.ToList().Take(200).ToList();
+                var retrievedReports = context.NasaFireReports.ToList();
                 foreach(var report in retrievedReports)
                 {
                     response.UsersReports.Add(new GetNearbyFiresResponseDTO()
@@ -82,7 +82,7 @@ namespace NASATest2018.Controllers
                         Distance = LatLongDistance(report.Latitude, report.Longitude, 46.481940m, 30.747274m)
                     });
                 }
-                response.UsersReports = response.UsersReports.OrderBy(x => x.Distance).ToList();
+                response.UsersReports = response.UsersReports.OrderBy(x => x.Distance).Take(400).ToList();
             }
             
             return View(response);
