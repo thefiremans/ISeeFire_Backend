@@ -180,36 +180,28 @@ namespace NASATest2018.Controllers
              }
  
              using (var client = new WebClient())
-             {
-                 
-                 {
-                     
-                     try
-            {
-            MemoryStream stream = new MemoryStream(client.DownloadData(path));
-            var result = parseNasaDataCSV(stream);
-            using(var context = new IsfContext())
-            {
+             {                     
                 try
                 {
-                context.NasaFireReports.AddRange(result);
-                context.SaveChanges(); 
+                    MemoryStream stream = new MemoryStream(client.DownloadData(path));
+                    var result = parseNasaDataCSV(stream);
+                    using(var context = new IsfContext())
+                    {
+                        try
+                        {
+                            context.NasaFireReports.AddRange(result);
+                            context.SaveChanges(); 
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
                 }
                 catch(Exception ex)
                 {
-                Console.WriteLine(ex.Message);
-                }
-
-                
-            }
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
- 
-                 }
-                 
+                    Console.WriteLine(ex.Message);
+                }                 
              }
              
  
