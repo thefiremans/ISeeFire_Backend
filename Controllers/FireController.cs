@@ -191,6 +191,8 @@ namespace NASATest2018.Controllers
                         {
                             context.NasaFireReports.AddRange(result);
                             context.SaveChanges(); 
+                            response.PathProcessed = path;
+                            response.RowsImported = result.Count;
                         }
                         catch(Exception ex)
                         {
@@ -221,6 +223,46 @@ namespace NASATest2018.Controllers
              return downloadNasaFileAndImportInDb(filesFromNASA[0]);
              
          }
+         [HttpGet]
+         public JsonResult Check()
+         {
+             return new JsonResult(getImageUrl("NASA.png"));
+         }
+
+         private  string getImageUrl(string imagePath)
+         {
+            string host = Request.Host.Value;
+            if(!host.StartsWith("http"))
+            {
+                host = "http://" + host;
+            }
+            string result = $"{host}/ISeeFireImages/{imagePath}";
+            return result;
+         }
+
+         [HttpGet]
+         public JsonResult DownloadNasaFiles()
+         {
+             
+             string[] filesFromNASA = new [] 
+             {
+                 "https://firms.modaps.eosdis.nasa.gov/data/active_fire/c6/csv/MODIS_C6_Global_24h.csv"
+                 , "https://firms.modaps.eosdis.nasa.gov/data/active_fire/viirs/csv/VNP14IMGTDL_NRT_Global_24h.csv"
+             };  
+
+             List<JsonResult> result = new List<JsonResult>();           
+
+             foreach(var path in filesFromNASA )
+             {
+
+                result.Add(downloadNasaFileAndImportInDb(path));
+
+             }
+
+             return new JsonResult(result);
+
+             
+         }
 
          [HttpPost]
         public JsonResult DownloadViirsFileFromNASA()
@@ -231,6 +273,7 @@ namespace NASATest2018.Controllers
              };
 
              return downloadNasaFileAndImportInDb(filesFromNASA[0]);
+             
              
          }
         
@@ -265,7 +308,7 @@ namespace NASATest2018.Controllers
             response.Add(new GetNearbyFiresResponseDTO() {
                 Latitude = 46.412424m,
                 Longitude = 30.670665m,
-                PhotoUrl = "dfgh",
+                PhotoUrl = getImageUrl("NASA.png"),
                 IsOwner = false,
                 IsNasa = true,
                 Confidence = 0.65m,   // from 0 to 1
@@ -310,7 +353,7 @@ namespace NASATest2018.Controllers
                     {
                         Latitude = report.Latitude,
                         Longitude = report.Longitude,
-                        PhotoUrl = "stillFake",
+                        PhotoUrl = getImageUrl("NASA.png"),
                         IsOwner = false,
                         IsNasa = true,
                         Confidence = report.Confidence, //confidence is already normalized
@@ -343,7 +386,7 @@ namespace NASATest2018.Controllers
                     {
                         Latitude = report.Latitude,
                         Longitude = report.Longitude,
-                        PhotoUrl = "stillFake",
+                        PhotoUrl = getImageUrl(report.ImagePath),
                         IsOwner = false,
                         IsNasa = false,
                         Confidence = 0.2m,

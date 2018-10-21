@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 
 namespace NASATest2018
 {
@@ -34,6 +36,9 @@ namespace NASATest2018
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddDirectoryBrowser();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,6 +61,26 @@ namespace NASATest2018
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+                    RequestPath = "/ISeeFireImages",
+                    OnPrepareResponse = ctx =>
+                        {
+                            // Requires the following import:
+                            // using Microsoft.AspNetCore.Http;
+                            ctx.Context.Response.Headers.Append("Cache-Control", $"public, max-age={60480}");
+                        }
+                }
+            );
+
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+                RequestPath = "/ISeeFireImages"
+            });
             app.UseCookiePolicy();
 
             app.UseMvc(routes =>
