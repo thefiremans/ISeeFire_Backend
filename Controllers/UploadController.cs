@@ -1,4 +1,4 @@
-
+using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using NASATest2018.Models;
@@ -36,6 +36,25 @@ namespace NASATest2018.Controllers
                 ReportId = HttpContext.Request.Form["ReportId"];
             }
 
+            int parsedReportId = 0;
+
+            bool parseResult = int.TryParse(ReportId, out parsedReportId);
+            if(!parseResult)
+            {
+                response.Error = "Failed to parse ReportId";
+                return new JsonResult(response);
+            }
+
+            using(var context = new IsfContext())
+            {
+                var findResult = context.Reports.FirstOrDefault(x => x.SecretUserId == SecretUserId && x.ReportId ==  parsedReportId);
+                if(findResult == null)
+                {
+                    response.Error = "No such portfolio binded to specified user.";
+                    return new JsonResult(response);
+                }
+            }
+
             if (HttpContext.Request.Form.Files != null)
             {
                 var fileName = string.Empty;
@@ -70,8 +89,40 @@ namespace NASATest2018.Controllers
                     }
 
                     newFileName = myUniqueFileName + FileExtension;
-                    response.TotalUploadedSize = fs.Length;
-                    response.GeneratedImageName = $"fileName: {newFileName}, SecretUser: {SecretUserId}, Report: {ReportId}";
+                    string pathToImage = System.IO.Path.Combine("./Images/", newFileName);
+                    try
+                    {
+                        using(var fileWrite = new FileStream(pathToImage, FileMode.CreateNew))
+                        {
+                            var bytes = fs.ToArray();
+                            fileWrite.Write(bytes, 0, bytes.Length);
+                            fileWrite.Flush();
+
+                            response.TotalUploadedSize = bytes.Length;
+                            response.GeneratedImageName = $"fileName: {pathToImage}, SecretUser: {SecretUserId}, Report: {ReportId}";
+                        }
+
+                        using(var context = new IsfContext())
+                        {
+                            var findResult = context.Reports.FirstOrDefault(x => x.SecretUserId == SecretUserId && x.ReportId ==  parsedReportId);
+                            findResult.ImagePath = pathToImage;
+                            context.SaveChanges();
+                        }
+
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+
+                        response.Error = "Failed to save image file";
+                        return new JsonResult(response);
+
+                    }
+
+                    
+
+                    
+                    
                 
                 }
             }
