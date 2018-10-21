@@ -235,7 +235,7 @@ namespace NASATest2018.Controllers
          }
         
         [HttpPost]
-        public JsonResult GetNearbyFires(GetNearbyFiresParametersDTO parameters)
+        public JsonResult GetNearbyFires([FromBody] GetNearbyFiresParametersDTO parameters)
         {
             var response = new List<GetNearbyFiresResponseDTO>();
 
