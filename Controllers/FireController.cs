@@ -22,6 +22,13 @@ namespace NASATest2018.Controllers
             }
         }
 
+        public IActionResult Reports()
+        {
+            
+            
+            return View();
+        }
+
         [HttpPost]
         public JsonResult ReportTheFire([FromBody] ReportTheFireParameterDTO param)
         {
@@ -388,7 +395,7 @@ namespace NASATest2018.Controllers
                     {
                         Latitude = report.Latitude,
                         Longitude = report.Longitude,
-                        PhotoUrl = getImageUrl(report.ImagePath),
+                        PhotoUrl = report.ImagePath ?? getImageUrl(report.ImagePath),
                         IsOwner = false,
                         IsNasa = false,
                         Confidence = 0.2m,
