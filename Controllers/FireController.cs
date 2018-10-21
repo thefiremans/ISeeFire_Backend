@@ -288,7 +288,7 @@ namespace NASATest2018.Controllers
             response.Add(new GetNearbyFiresResponseDTO() {
                 Latitude = 46.484566m, 
                 Longitude = 30.737960m,
-                PhotoUrl = "asdf",
+                PhotoUrl = null,
                 IsOwner = true,
                 IsNasa = false,
                 Confidence = 0.2m,   // from 0 to 1
@@ -299,7 +299,7 @@ namespace NASATest2018.Controllers
             response.Add(new GetNearbyFiresResponseDTO() {
                 Latitude = 46.500144m,
                 Longitude = 30.663893m,
-                PhotoUrl = "sdfg",
+                PhotoUrl = null,
                 IsOwner = false,
                 IsNasa = false,
                 Confidence = 0.2m,   // from 0 to 1
