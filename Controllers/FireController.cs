@@ -246,7 +246,8 @@ namespace NASATest2018.Controllers
                 PhotoUrl = "asdf",
                 IsOwner = true,
                 IsNasa = false,
-                Confidence = 0.2m   // from 0 to 1
+                Confidence = 0.2m,   // from 0 to 1
+                Distance = LatLongDistance(46.484566m, 30.737960m, parameters.Latitude, parameters.Longitude)
             });
 
             // not owner
@@ -256,7 +257,8 @@ namespace NASATest2018.Controllers
                 PhotoUrl = "sdfg",
                 IsOwner = false,
                 IsNasa = false,
-                Confidence = 0.2m   // from 0 to 1
+                Confidence = 0.2m,   // from 0 to 1
+                Distance = LatLongDistance(46.500144m, 30.663893m, parameters.Latitude, parameters.Longitude)
             });
 
             // nasa
@@ -266,7 +268,8 @@ namespace NASATest2018.Controllers
                 PhotoUrl = "dfgh",
                 IsOwner = false,
                 IsNasa = true,
-                Confidence = 0.65m   // from 0 to 1
+                Confidence = 0.65m,   // from 0 to 1
+                Distance = LatLongDistance(46.412424m, 30.670665m, parameters.Latitude, parameters.Longitude)
             });
 
             decimal longitudeDelta = DistanceToLongitude(parameters.Distance, parameters.Latitude);
@@ -310,7 +313,8 @@ namespace NASATest2018.Controllers
                         PhotoUrl = "stillFake",
                         IsOwner = false,
                         IsNasa = true,
-                        Confidence = report.Confidence //confidence is already normalized
+                        Confidence = report.Confidence, //confidence is already normalized
+                        Distance = LatLongDistance(report.Latitude, report.Longitude, parameters.Latitude, parameters.Longitude)
                     });
                 }
 
@@ -342,7 +346,8 @@ namespace NASATest2018.Controllers
                         PhotoUrl = "stillFake",
                         IsOwner = false,
                         IsNasa = false,
-                        Confidence = 0.2m
+                        Confidence = 0.2m,
+                        Distance = LatLongDistance(report.Latitude, report.Longitude, parameters.Latitude, parameters.Longitude)
                     });
                 }
             }
@@ -350,6 +355,29 @@ namespace NASATest2018.Controllers
             response = response.OrderBy(q => q.Distance).ToList();
 
             return new JsonResult(response);
+        }
+
+        private decimal LatLongDistance(decimal lat1, decimal lon1, decimal lat2, decimal lon2)
+        {
+            var R = 6371000; // metres
+            var phi1 = toRadians(lat1);
+            var phi2 = toRadians(lat2);
+            var dPhi = toRadians(lat2-lat1);
+            var dLambda = toRadians(lon2-lon1);
+
+            var a = Math.Sin((double)dPhi/2) * Math.Sin((double)dPhi/2) +
+                    Math.Cos((double)phi1) * Math.Cos((double)phi2) *
+                    Math.Sin((double)dLambda/2) * Math.Sin((double)dLambda/2);
+
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1-a));
+            var d = R * c;
+
+            return (decimal)d;
+        }
+
+        private decimal toRadians(decimal a)
+        {
+            return (a*2.0m*(decimal)Math.PI)/360.0m;
         }
 
         private decimal NormalizeLongitude(decimal longitude)
