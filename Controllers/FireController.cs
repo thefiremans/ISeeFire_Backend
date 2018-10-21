@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using ISeeFire_Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using NASATest2018.Models;
 
@@ -24,9 +25,67 @@ namespace NASATest2018.Controllers
 
         public IActionResult Reports()
         {
+            ReportsModel response = new ReportsModel
+            {
+                UsersReports = new List<GetNearbyFiresResponseDTO>()
+            };
+            using (var context = new IsfContext())
+            {
+                var retrievedReports = context.Reports.ToList();
+                foreach(var report in retrievedReports)
+                {
+                    response.UsersReports.Add(new GetNearbyFiresResponseDTO()
+                    {
+                        Latitude = report.Latitude,
+                        Longitude = report.Longitude,
+                        PhotoUrl = report.ImagePath ?? getImageUrl(report.ImagePath),
+                        IsOwner = false,
+                        IsNasa = false,
+                        Confidence = 0.2m,
+                        Distance = LatLongDistance(report.Latitude, report.Longitude, 46.481940m, 30.747274m)
+                    });
+                }
+                response.UsersReports.Add(new GetNearbyFiresResponseDTO() {
+                    Latitude = 46.500144m,
+                    Longitude = 30.663893m,
+                    PhotoUrl = getImageUrl("NASA"),
+                    IsOwner = false,
+                    IsNasa = false,
+                    Confidence = 0.2m,   // from 0 to 1
+                    Distance = LatLongDistance(46.500144m, 30.663893m,  46.481940m, 30.747274m)
+                });
+                response.UsersReports = response.UsersReports.OrderBy(x => x.Distance).ToList();
+            }
             
+            return View(response);
+        }
+
+        public IActionResult NasaReports()
+        {
+            ReportsModel response = new ReportsModel
+            {
+                UsersReports = new List<GetNearbyFiresResponseDTO>()
+            };
+            using (var context = new IsfContext())
+            {
+                var retrievedReports = context.NasaFireReports.ToList().Take(200).ToList();
+                foreach(var report in retrievedReports)
+                {
+                    response.UsersReports.Add(new GetNearbyFiresResponseDTO()
+                    {
+                        Latitude = report.Latitude,
+                        Longitude = report.Longitude,
+                        PhotoUrl = getImageUrl("NASA"),
+                        IsOwner = false,
+                        IsNasa = false,
+                        Confidence = report.Confidence,
+                        Distance = LatLongDistance(report.Latitude, report.Longitude, 46.481940m, 30.747274m)
+                    });
+                }
+                response.UsersReports = response.UsersReports.OrderBy(x => x.Distance).ToList();
+            }
             
-            return View();
+            return View(response);
         }
 
         [HttpPost]
