@@ -2,7 +2,75 @@
     ViewData["Title"] = "ISeeFire";
 }
 
-<h1>ISeeFire</h1>
+<style>
+body, html {
+  height: 100%;
+  margin: 0;
+  font: 400 15px/1.8 "Lato", sans-serif;
+  color: #777;
+}
+
+.bgimg-1, .bgimg-2, .bgimg-3 {
+  position: relative;
+  opacity: 0.8;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+}
+.bgimg-1 {
+  background-image: url("ISeeFireImages/fire-image.jpg");
+  height: 100%;
+}
+
+.caption {
+  opacity: 0.65;
+  position: absolute;
+  background-color: #111;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  text-align: center;
+  color: #000;
+}
+
+.caption span.border {
+  
+  color: #fff;
+  padding: 18px;
+  font-size: 25px;
+}
+
+h3 {
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  font: 20px "Lato", sans-serif;
+  color: #111;
+}
+</style>
+
+
+<div class="bgimg-1">
+  <div class="caption">
+    <span class="border">ISeeFire</span>
+    <br>
+    <span class="border">by "The Firemans" team</span>
+    <br>
+    <span class="border">NASA Space Apps Challenge 2018</span>
+        <!-- <br>
+         by "The Firemans" team
+         <br>
+         NASA Space Apps Challenge 2018
+         </span> -->
+  </div>
+</div>
+
+
+<!-- <h1>ISeeFire</h1>
 <h2>NASA Space Apps Challenge 2018</h2>
 
 <h2>Team: The Firemans</h2>
+
+<h2>Fires from NASA services since last 24h:</h2>
+
+<img src="~/ISeeFireImages/fire-image.jpg"  class="img-responsive" /> -->
