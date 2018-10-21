@@ -15,8 +15,8 @@ namespace NASATest2018
 		public string TextOfComment {get;set;}
 		public decimal Longitude {get;set;}
 		public decimal Latitude {get;set;}
+		public decimal Distance {get;set;}
 		public DateTime Timestamp {get;set;}
-
 		public string ImagePath {get; set;}
 	}
 }

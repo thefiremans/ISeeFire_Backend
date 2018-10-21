@@ -42,7 +42,8 @@ namespace NASATest2018.Controllers
                             Longitude = param.Longitude,
                             Latitude = param.Latitude,
                             TextOfComment = param.TextOfComment,
-                            Timestamp = DateTime.UtcNow
+                            Timestamp = DateTime.UtcNow,
+                            Distance = param.Distance
                         }
 
                     );
@@ -212,70 +213,71 @@ namespace NASATest2018.Controllers
             
         }
 
-         [HttpPost]
+        [HttpPost]
         public JsonResult DownloadModisFileFromNASA()
-         {
-             string[] filesFromNASA = new [] 
-             {
-                 "https://firms.modaps.eosdis.nasa.gov/data/active_fire/c6/csv/MODIS_C6_Global_24h.csv"
-             };
-
-             return downloadNasaFileAndImportInDb(filesFromNASA[0]);
-             
-         }
-         [HttpGet]
-         public JsonResult Check()
-         {
-             return new JsonResult(getImageUrl("NASA.png"));
-         }
-
-         private  string getImageUrl(string imagePath)
-         {
-            string host = Request.Host.Value;
-            if(!host.StartsWith("http"))
+        {
+            string[] filesFromNASA = new [] 
             {
-                host = "http://" + host;
+                "https://firms.modaps.eosdis.nasa.gov/data/active_fire/c6/csv/MODIS_C6_Global_24h.csv"
+            };
+
+            return downloadNasaFileAndImportInDb(filesFromNASA[0]);
+            
+        }
+
+        [HttpGet]
+        public JsonResult Check()
+        {
+            return new JsonResult(getImageUrl("NASA.png"));
+        }
+
+        private  string getImageUrl(string imagePath)
+        {
+        string host = Request.Host.Value;
+        if(!host.StartsWith("http"))
+        {
+            host = "http://" + host;
+        }
+        string result = $"{host}/ISeeFireImages/{imagePath}";
+        return result;
+        }
+
+        [HttpGet]
+        public JsonResult DownloadNasaFiles()
+        {
+            
+            string[] filesFromNASA = new [] 
+            {
+                "https://firms.modaps.eosdis.nasa.gov/data/active_fire/c6/csv/MODIS_C6_Global_24h.csv"
+                , "https://firms.modaps.eosdis.nasa.gov/data/active_fire/viirs/csv/VNP14IMGTDL_NRT_Global_24h.csv"
+            };  
+
+            List<JsonResult> result = new List<JsonResult>();           
+
+            foreach(var path in filesFromNASA )
+            {
+
+            result.Add(downloadNasaFileAndImportInDb(path));
+
             }
-            string result = $"{host}/ISeeFireImages/{imagePath}";
-            return result;
-         }
 
-         [HttpGet]
-         public JsonResult DownloadNasaFiles()
-         {
-             
-             string[] filesFromNASA = new [] 
-             {
-                 "https://firms.modaps.eosdis.nasa.gov/data/active_fire/c6/csv/MODIS_C6_Global_24h.csv"
-                 , "https://firms.modaps.eosdis.nasa.gov/data/active_fire/viirs/csv/VNP14IMGTDL_NRT_Global_24h.csv"
-             };  
+            return new JsonResult(result);
 
-             List<JsonResult> result = new List<JsonResult>();           
+            
+        }
 
-             foreach(var path in filesFromNASA )
-             {
-
-                result.Add(downloadNasaFileAndImportInDb(path));
-
-             }
-
-             return new JsonResult(result);
-
-             
-         }
-
-         [HttpPost]
+        [HttpPost]
         public JsonResult DownloadViirsFileFromNASA()
-         {
-             string[] filesFromNASA = new [] 
-             {
-                 "https://firms.modaps.eosdis.nasa.gov/data/active_fire/viirs/csv/VNP14IMGTDL_NRT_Global_24h.csv"
-             };
+        {
+            string[] filesFromNASA = new [] 
+            {
+                "https://firms.modaps.eosdis.nasa.gov/data/active_fire/viirs/csv/VNP14IMGTDL_NRT_Global_24h.csv"
+            };
 
-             return downloadNasaFileAndImportInDb(filesFromNASA[0]);
-             
-             
-         }
+            return downloadNasaFileAndImportInDb(filesFromNASA[0]);
+            
+            
+        }
         
         [HttpPost]
         public JsonResult GetNearbyFires([FromBody] GetNearbyFiresParametersDTO parameters)
@@ -444,7 +446,6 @@ namespace NASATest2018.Controllers
             double localLength = localRadius*2.0*Math.PI;
             return (decimal)Math.Abs(((double)distance*360.0)/localLength);
         }
-
         private decimal DistanceToLatitude(decimal distance)
         {
             return (decimal)Math.Abs((double) ((180.0m*distance)/20003930.0m));   // in meters
