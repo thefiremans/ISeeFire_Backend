@@ -255,7 +255,7 @@ namespace NASATest2018.Controllers
              foreach(var path in filesFromNASA )
              {
 
-                result.Add(downloadNasaFileAndImportInDb(filesFromNASA[0]));
+                result.Add(downloadNasaFileAndImportInDb(path));
 
              }
 
