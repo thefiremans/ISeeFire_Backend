@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "ISeeFire";
 }
+@model ISeeFire_Backend.Models.ReportsModel
 
 <style>
 body, html {
@@ -49,17 +50,15 @@ h3 {
   color: #111;
 }
 </style>
-
-
-<div class="bgimg-1">
-  <div class="caption">
-    <span class="border">#ISeeFire</span>
-    <br>
-    <span class="border">by "The Firemans" team</span>
-    <br>
-    <span class="border">NASA Space Apps Challenge 2018</span>
-    <br>
-    <span class="border"><a href="@(Url.Action("Reports", "Fire"))">User Reports</a></span>
-    <span class="border"><a href="@(Url.Action("NasaReports", "Fire"))">Nasa Reports</a></span>
-  </div>
+<div>
+  NASA Reports:
 </div>
+
+@{
+  foreach(var m in Model.UsersReports )
+  {
+    <div>
+      @($"{Math.Round(m.Distance, 2)} meters, url: {m.PhotoUrl}, Latitude: {m.Latitude}, Longitude: {m.Longitude}, Confidence: {Math.Round(m.Confidence, 2 )} ")
+    </div>
+  }
+}

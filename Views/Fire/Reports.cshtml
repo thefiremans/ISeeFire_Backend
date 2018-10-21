@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "ISeeFire";
 }
+@model ISeeFire_Backend.Models.ReportsModel
 
 <style>
 body, html {
@@ -49,3 +50,15 @@ h3 {
   color: #111;
 }
 </style>
+<div>
+  User Reports:
+</div>
+
+@{
+  foreach(var m in Model.UsersReports )
+  {
+    <div>
+      @($"{Math.Round(m.Distance, 2)} meters, url: {m.PhotoUrl}, Latitude: {m.Latitude}, Longitude: {m.Longitude}, Confidence: {Math.Round(m.Confidence, 2 )} ")
+    </div>
+  }
+}
