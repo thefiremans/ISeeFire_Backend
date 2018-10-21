@@ -449,7 +449,8 @@ namespace NASATest2018.Controllers
         private decimal DistanceToLongitude(decimal distance, decimal latitude)
         {
             int radius = 6371000;   // in meters
-            double localRadius = radius*Math.Cos((double)latitude);
+            double latitudeInRadians = ( ((double) latitude) * Math.PI ) / 180.0;
+            double localRadius = radius*Math.Cos(latitudeInRadians );
             double localLength = localRadius*2.0*Math.PI;
             return (decimal)Math.Abs(((double)distance*360.0)/localLength);
         }
