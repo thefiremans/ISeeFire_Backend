@@ -130,20 +130,21 @@ namespace NASATest2018.Controllers
                     {
                         if(localConfidence.StartsWith("l"))
                         {
-                            parsedConfidence = 10;
+                            parsedConfidence = 0.10m;
                         }
                         if(localConfidence.StartsWith("n"))
                         {
-                            parsedConfidence = 40;
+                            parsedConfidence = 0.40m;
                         }
                         if(localConfidence.StartsWith("h"))
                         {
-                            parsedConfidence = 80;
+                            parsedConfidence = 0.80m;
                         }
                     }
                     else
                     {
                         parsedConfidence = Decimal.Parse(localConfidence);
+                        parsedConfidence = parsedConfidence / 100.0m;
                     }
 
                     var x = new NasaFireReport
