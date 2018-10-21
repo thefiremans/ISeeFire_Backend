@@ -221,6 +221,22 @@ namespace NASATest2018.Controllers
              return downloadNasaFileAndImportInDb(filesFromNASA[0]);
              
          }
+         [HttpGet]
+         public JsonResult Check()
+         {
+             return new JsonResult(getImageUrl("NASA.png"));
+         }
+
+         private  string getImageUrl(string imagePath)
+         {
+            string host = Request.Host.Value;
+            if(!host.StartsWith("http"))
+            {
+                host = "http://" + host;
+            }
+            string result = $"{host}/ISeeFireImages/{imagePath}";
+            return result;
+         }
 
          [HttpPost]
         public JsonResult DownloadViirsFileFromNASA()
@@ -231,6 +247,7 @@ namespace NASATest2018.Controllers
              };
 
              return downloadNasaFileAndImportInDb(filesFromNASA[0]);
+             
              
          }
         
