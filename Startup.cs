@@ -36,6 +36,9 @@ namespace NASATest2018
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddDirectoryBrowser();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,6 +74,13 @@ namespace NASATest2018
                         }
                 }
             );
+
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+                RequestPath = "/ISeeFireImages"
+            });
             app.UseCookiePolicy();
 
             app.UseMvc(routes =>
